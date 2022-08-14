@@ -1,36 +1,40 @@
 <template>
-  <div>
+  <div id="container">
     <v-row justify="center">
-      <v-dialog v-model="dialog" persistent>
+      <v-dialog
+        @error="isAddClicked"
+        v-model="dialog"
+        persistent
+        @after-leave="dialogAfterLeave"
+      >
         <v-card>
-          <v-card-title id="edit-unit-label"> EDIT UNIT </v-card-title>
+          <v-card-title id="edit-unit-label"> {{ cardTitle }} </v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="UNIT NUMBER"></v-text-field>
+                  <v-text-field
+                    label="UNIT NUMBER"
+                    v-model="newUnitNumber"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="NAME(S)"></v-text-field>
+                  <v-text-field
+                    label="NAME(S)"
+                    v-model="newUnitName"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="DEPARTMENT"></v-text-field>
+                  <v-text-field
+                    label="DEPARTMENT"
+                    v-model="newUnitDepartment"
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field label="RANK"></v-text-field>
-                </v-col>
-                <v-col cols="12" id="status-selector">
-                  <v-select
-                    variant="outlined"
-                    label="STATUS"
-                    :items="[
-                      'BUSY',
-                      'UNAVAILABLE',
-                      'AVAILABLE',
-                      'EN ROUTE',
-                      'ON SCENE',
-                    ]"
-                  ></v-select>
+                  <v-text-field
+                    label="RANK"
+                    v-model="newUnitRank"
+                  ></v-text-field>
                 </v-col>
 
                 <v-col cols="12" sm="6" md="6">
@@ -38,18 +42,14 @@
                     block
                     color="green-darken-1"
                     text
-                    @click="this.$emit('reset')"
+                    @click="onSet"
+                    :disabled="isAddButtonDisabled"
                   >
-                    SAVE
+                    {{ btnSaveTitle }}
                   </v-btn>
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-btn
-                    block
-                    color="red-darken-1"
-                    text
-                    @click="this.$emit('reset')"
-                  >
+                  <v-btn block color="red-darken-1" text @click="onClose">
                     CLOSE
                   </v-btn>
                 </v-col>
@@ -63,12 +63,20 @@
 </template>
 
 <script>
+/* eslint-disable */
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "AddUnitDialogCard",
   data() {
     return {
       dialog: false,
-      unitIdData: null,
+      id: null,
+      newUnitNumber: null,
+      newUnitName: null,
+      newUnitRank: null,
+      newUnitDepartment: null,
+      newUnit: null,
+      isAddBtnClicked: false,
     };
   },
   props: {
@@ -76,25 +84,80 @@ export default {
       type: String,
       default: null,
     },
-    isEditButtonClicked: {
-      type: Boolean,
-      default: false,
-    },
   },
   watch: {
     unitId(newValue) {
       if (newValue) {
-        this.unitIdData = newValue;
+        this.id = newValue;
+        this.onChangeValues(newValue);
         this.dialog = true;
-      } else {
-        this.unitIdData = null;
-        this.dialog = false;
       }
-      console.log(this.unitIdData);
     },
   },
-
-  methods: {},
+  computed: {
+    ...mapGetters("unit", ["getUnitById", "isBtnClicked"]),
+    cardTitle() {
+      return this.id
+        ? `EDIT UNIT: ${this.getUnitById(this.id).number}`
+        : "ADD UNIT";
+    },
+    isAddClicked() {
+      if (this.isBtnClicked()) {
+        this.dialog = true;
+      }
+    },
+    btnSaveTitle() {
+      return this.id ? "SAVE" : "ADD";
+    },
+    isAddButtonDisabled() {
+      let unit = [
+        this.newUnitNumber,
+        this.newUnitDepartment,
+        this.newUnitName,
+        this.newUnitRank,
+      ];
+      let isUndef = unit.filter(
+        (item) => item === null || item === "" || item.length === 0
+      );
+      if (isUndef.length) {
+        isUndef = true;
+      } else isUndef = false;
+      return isUndef;
+    },
+  },
+  methods: {
+    ...mapActions("unit", ["setUnit", "setBtnClicked"]),
+    onSet() {
+      let unit = {
+        id: this?.id,
+        number: this.newUnitNumber,
+        rank: this.newUnitRank,
+        department: this.newUnitDepartment,
+        name: this.newUnitName,
+      };
+      this.setUnit(unit);
+      this.dialog = false;
+    },
+    onClose() {
+      this.dialog = false;
+    },
+    onChangeValues(id) {
+      let unit = this.getUnitById(id);
+      (this.newUnitNumber = unit.number),
+        (this.newUnitName = unit.name),
+        (this.newUnitRank = unit.rank),
+        (this.newUnitDepartment = unit.department);
+    },
+    dialogAfterLeave() {
+      this.setBtnClicked(false);
+      this.id = null;
+      this.$emit("reset");
+      this.newUnitNumber = null;
+      this.newUnitDepartment = null;
+      this.newUnitName = null;
+      this.newUnitRank = null;
+    },
+  },
 };
 </script>
 
@@ -104,5 +167,8 @@ export default {
 }
 #status-selector {
   width: 100px;
+}
+#container {
+  margin-top: 2.5%;
 }
 </style>

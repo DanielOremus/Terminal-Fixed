@@ -8,29 +8,45 @@ export default {
           id: uuidv4(),
           number: "L-42",
           status: "BUSY",
-          name: ["Mitz Cannon", "LLL"],
-          rank: ["Sergeant"],
+          name: "Mitz Cannon LLL",
+          rank: "Sergeant",
           department: "Police Dept.",
         },
         {
           id: uuidv4(),
           number: "L-45",
           status: "BUSY",
-          name: ["Rudy Ramirez"],
-          rank: ["Police Officer III"],
+          name: "Rudy Ramirez",
+          rank: "Police Officer III",
           department: "Police Dept.",
         },
       ],
+      isBtnClicked: false,
     };
   },
   getters: {
     unitList: (state) => state.unitList,
-    getUnitById: (state, id) => state.unitList.find((item) => item.id === id),
+    getUnitById: (state) => (id) =>
+      state.unitList.find((item) => item.id === id),
+    isBtnClicked: (state) => () => state.isBtnClicked,
   },
   mutations: {
+    setBtnClicked: (state, data) => {
+      state.isBtnClicked = data;
+      console.log(state.isBtnClicked);
+    },
     setUnit: (state, data) => {
-      const index = state.unitList.map((item) => item.id).indexOf(data.id);
-      state.unitList.splice(index, 1, data);
+      if (state.unitList.find((item) => item.id === data.id)) {
+        const index = state.unitList.map((item) => item.id).indexOf(data.id);
+        state.unitList.splice(index, 1, data);
+      } else {
+        let unit = {
+          ...data,
+          id: uuidv4(),
+        };
+        state.unitList.push(unit);
+      }
+
       // getUnitById.
     },
     addUnit: (state, name) => {
@@ -53,6 +69,9 @@ export default {
     },
     deleteUnit({ commit }, id) {
       commit("deleteUnit", id);
+    },
+    setBtnClicked({ commit }, data) {
+      commit("setBtnClicked", data);
     },
   },
 };

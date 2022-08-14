@@ -2,32 +2,34 @@
   <div>
     <v-card id="unit-display-card">
       <v-card-title>ACTIVE UNITS</v-card-title>
-
-      <v-container>
-        <v-table id="unit-display-table" fixed-footer fixed-header>
-          <tr>
-            <th>UNIT NAME</th>
-            <th>NAME(S)</th>
-            <th>STATUS</th>
-            <th>D/E</th>
-          </tr>
-          <tr v-for="unit in unitList" :key="unit.id">
-            <unit-card :unit="unit" @openDialog="sendToDialog"></unit-card>
-          </tr>
-        </v-table>
-      </v-container>
+      <br />
+      <v-table id="unit-display-table">
+        <tr>
+          <th>UNIT NAME</th>
+          <th>NAME(S)</th>
+          <th>STATUS</th>
+          <th>D/E</th>
+        </tr>
+        <tr v-for="unit in unitList" :key="unit.id">
+          <unit-card :unit="unit" @openDialog="sendIdToDialog"></unit-card>
+        </tr>
+        <tr v-if="!unitList.length">
+          <td colspan="4">
+            <v-icon icon="mdi-alert-outline"></v-icon> NO DATA
+          </td>
+        </tr>
+      </v-table>
     </v-card>
-
-    <v-text-field type="text" v-model="newUnit" v-on:keyup.enter="onAdd" />
     <add-unit-dialog-card
       :unitId="unitId"
-      @reset="unitId = null"
+      @reset="onReset"
+      :isAddClicked="isClicked"
     ></add-unit-dialog-card>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import UnitCard from "./UnitCard.vue";
 import AddUnitDialogCard from "./AddUnitDialogCard.vue";
 /* eslint-disable */
@@ -41,7 +43,7 @@ export default {
     return {
       newUnit: null,
       unitId: null,
-      isEditButtonClicked: false,
+      isClicked: false,
     };
   },
   computed: {
@@ -49,12 +51,15 @@ export default {
   },
 
   methods: {
-    ...mapActions("unit", ["addUnit"]),
-    onAdd() {
-      this.addUnit(this.newUnit);
-    },
-    sendToDialog(id) {
+    sendIdToDialog(id) {
       this.unitId = id;
+    },
+    sendEventToDialog() {
+      this.isClicked = true;
+    },
+    onReset() {
+      this.unitId = null;
+      this.isClicked = false;
     },
   },
 };
@@ -62,11 +67,21 @@ export default {
 
 <style lang="css" scoped>
 #unit-display-card {
-  width: 50%;
   border: 2px solid rgb(84, 84, 84) !important;
   text-align: center;
 }
 th {
   padding-bottom: 15px;
+  width: 100vh;
+}
+td {
+  border-top: 1px solid rgb(84, 84, 84);
+  vertical-align: middle;
+  height: 50px;
+}
+
+#add-unit-btn {
+  justify-content: center;
+  text-align: center;
 }
 </style>

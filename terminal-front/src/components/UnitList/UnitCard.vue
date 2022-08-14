@@ -1,6 +1,6 @@
 <template>
   <td>{{ unit.number }}</td>
-  <td>{{ unit.name.join(" | ") }}</td>
+  <td>{{ unit.name }}</td>
   <td id="selector-td">
     <v-select
       @update:modelValue="this.onSet"
@@ -46,7 +46,6 @@ export default {
       this.setUnit(data);
     },
     onDelete() {
-      console.log(this.unit.id);
       alert(`Вы удалили ${this.unit.number}`);
       this.deleteUnit(this.unit.id);
     },
@@ -62,7 +61,7 @@ td {
   margin: 10px 0;
 }
 #selector-td {
-  width: 17%;
+  width: 20%;
   padding-right: 10px;
 }
 </style>

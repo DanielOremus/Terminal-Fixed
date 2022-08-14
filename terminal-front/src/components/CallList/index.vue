@@ -1,24 +1,24 @@
 <template>
   <div>
     <v-card class="call-create-card">
+      <v-row class="call-title-label">
+        <v-col cols="12" sm="12">
+          <v-card-title>{{ mainTitle }}</v-card-title>
+        </v-col>
+      </v-row>
       <v-container>
-        <v-row class="call-title-label">
-          <v-col cols="12" sm="12">
-            <v-card-title>{{ mainTitle }}</v-card-title>
-          </v-col>
-        </v-row>
         <v-row>
           <v-col cols="12" sm="4">
             <v-text-field
               v-model="newCallTitle"
               label="CALL TITLE"
-              variant="underlined"
+              variant="outlined"
             />
           </v-col>
 
           <v-col cols="12" md="2">
             <v-select
-              variant="underlined"
+              variant="outlined"
               v-model="newCallPriority"
               label="PRIORITY"
               :items="this.callPriorities"
@@ -26,7 +26,7 @@
           </v-col>
           <v-col cols="12" md="3">
             <v-select
-              variant="underlined"
+              variant="outlined"
               v-model="newCallCode"
               label="CODE"
               :items="this.callCodes"
@@ -35,7 +35,7 @@
 
           <v-col cols="12" md="3">
             <v-select
-              variant="underlined"
+              variant="outlined"
               v-model="newCallStatus"
               label="CALL STATUS"
               :items="this.callStatuses"
@@ -47,12 +47,12 @@
             <v-text-field
               v-model="newCallLocation"
               label="LOCATION"
-              variant="underlined"
+              variant="outlined"
             />
           </v-col>
           <v-col cols="12" sm="4">
             <v-select
-              variant="underlined"
+              variant="outlined"
               v-model="newCallRespondingUnits"
               chips
               multiple
@@ -247,13 +247,10 @@ export default {
   margin-top: 12px;
 }
 .call-create-card {
-  width: 50%;
-  margin-left: 50%;
   border: 2px solid rgb(84, 84, 84) !important;
 }
 .call-render-card {
-  width: 50%;
-  margin: 40px 0 0 50%;
+  margin: 40px 0 0 0;
   border: 2px solid rgb(84, 84, 84) !important;
 }
 </style>
