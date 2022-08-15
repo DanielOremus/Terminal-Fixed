@@ -8,7 +8,9 @@
         @after-leave="dialogAfterLeave"
       >
         <v-card>
-          <v-card-title id="edit-unit-label"> {{ cardTitle }} </v-card-title>
+          <v-card-title id="edit-unit-label">
+            {{ cardTitle }}
+          </v-card-title>
           <v-card-text>
             <v-container>
               <v-row>
@@ -38,13 +40,7 @@
                 </v-col>
 
                 <v-col cols="12" sm="6" md="6">
-                  <v-btn
-                    block
-                    color="green-darken-1"
-                    text
-                    @click="onSet"
-                    :disabled="isAddButtonDisabled"
-                  >
+                  <v-btn block color="green-darken-1" text @click="onSet">
                     {{ btnSaveTitle }}
                   </v-btn>
                 </v-col>
@@ -81,7 +77,7 @@ export default {
   },
   props: {
     unitId: {
-      type: String,
+      type: Number,
       default: null,
     },
   },
@@ -95,12 +91,8 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("unit", ["getUnitById", "isBtnClicked"]),
-    cardTitle() {
-      return this.id
-        ? `EDIT UNIT: ${this.getUnitById(this.id).number}`
-        : "ADD UNIT";
-    },
+    ...mapGetters("unit", ["isBtnClicked"]),
+
     isAddClicked() {
       if (this.isBtnClicked()) {
         this.dialog = true;
@@ -109,33 +101,59 @@ export default {
     btnSaveTitle() {
       return this.id ? "SAVE" : "ADD";
     },
-    isAddButtonDisabled() {
-      let unit = [
-        this.newUnitNumber,
-        this.newUnitDepartment,
-        this.newUnitName,
-        this.newUnitRank,
-      ];
-      let isUndef = unit.filter(
-        (item) => item === null || item === "" || item.length === 0
-      );
-      if (isUndef.length) {
-        isUndef = true;
-      } else isUndef = false;
-      return isUndef;
-    },
+    // isAddButtonDisabled() {
+    //   let unit = [
+    //     this.newUnitNumber,
+    //     this.newUnitDepartment,
+    //     this.newUnitName,
+    //     this.newUnitRank,
+    //   ];
+    //   console.log(unit);
+    //   let isUndef = unit.filter(
+    //     (item) => item === null || item === "" || item.length === 0
+    //   );
+    //   if (isUndef.length) {
+    //     isUndef = true;
+    //   } else isUndef = false;
+    //   return isUndef;
   },
   methods: {
-    ...mapActions("unit", ["setUnit", "setBtnClicked"]),
+    ...mapActions("unit", [
+      "addUnit",
+      "setBtnClicked",
+      "getUnitById",
+      "updateUnit",
+    ]),
+
+    cardTitle() {
+      if (this.id) {
+        console.log(this.getUnitById(this.id).then((res) => res.number));
+        return `EDIT UNIT: ${this.getUnitById(this.id).then(
+          (res) => res.number
+        )}`;
+      } else return "ADD UNIT";
+    },
+
     onSet() {
-      let unit = {
-        id: this?.id,
-        number: this.newUnitNumber,
-        rank: this.newUnitRank,
-        department: this.newUnitDepartment,
-        name: this.newUnitName,
-      };
-      this.setUnit(unit);
+      if (!this.id) {
+        let unit = {
+          number: this.newUnitNumber,
+          rank: this.newUnitRank,
+          department: this.newUnitDepartment,
+          name: this.newUnitName,
+          status: "Busy",
+        };
+        this.addUnit(unit);
+      } else {
+        let unit = {
+          id: this.id,
+          number: this.newUnitNumber,
+          rank: this.newUnitRank,
+          department: this.newUnitDepartment,
+          name: this.newUnitName,
+        };
+        this.updateUnit(unit);
+      }
       this.dialog = false;
     },
     onClose() {

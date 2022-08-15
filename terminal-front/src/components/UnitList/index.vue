@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import UnitCard from "./UnitCard.vue";
 import AddUnitDialogCard from "./AddUnitDialogCard.vue";
 /* eslint-disable */
@@ -51,6 +51,7 @@ export default {
   },
 
   methods: {
+    ...mapActions("unit", ["loadUnits"]),
     sendIdToDialog(id) {
       this.unitId = id;
     },
@@ -61,6 +62,9 @@ export default {
       this.unitId = null;
       this.isClicked = false;
     },
+  },
+  mounted() {
+    this.loadUnits();
   },
 };
 </script>

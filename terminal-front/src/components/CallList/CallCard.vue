@@ -36,7 +36,7 @@ export default {
   methods: {
     ...mapActions("call", ["deleteCall"]),
     onDelete() {
-      alert(`Вы удалили вызов: ${this.call.title}`);
+      alert(`The call - "${this.call.title}" was deleted`);
       this.deleteCall(this.call.id);
     },
   },

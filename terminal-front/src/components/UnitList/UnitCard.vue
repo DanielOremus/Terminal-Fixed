@@ -36,7 +36,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("unit", ["setUnit", "deleteUnit"]),
+    ...mapActions("unit", ["setUnit", "deleteUnit", "loadUnits"]),
     onSet(status) {
       console.log(status);
       let data = {
@@ -46,7 +46,7 @@ export default {
       this.setUnit(data);
     },
     onDelete() {
-      alert(`Вы удалили ${this.unit.number}`);
+      alert(`${this.unit.number} was deleted`);
       this.deleteUnit(this.unit.id);
     },
   },
