@@ -201,7 +201,6 @@ export default {
           code: this.newCallCode,
           notes: this.newCallNotes,
         };
-        console.log(this.newCallRespondingUnits);
         this.addCall(call);
       } else {
         let call = {

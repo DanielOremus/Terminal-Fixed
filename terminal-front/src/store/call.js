@@ -50,7 +50,6 @@ export default {
 
     async updateCall({ commit, dispatch }, data) {
       try {
-        console.log(data);
         await axios.put(apiEndpoints.calls.updateCall(data.id), data);
         commit("updateCall", data);
         dispatch("loadCalls");
