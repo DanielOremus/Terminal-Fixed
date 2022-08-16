@@ -7,7 +7,7 @@
       {{ call.location }}
     </v-col>
     <v-col cols="12" sm="4" class="text">
-      {{ call.respondingUnits.join(" | ") }}
+      {{ respondingUnitsTitle }}
     </v-col>
     <v-col cols="12" sm="2">
       <v-btn @click="onDelete" :disabled="this.isDisabled" block>Delete</v-btn>
@@ -38,6 +38,18 @@ export default {
     onDelete() {
       alert(`The call - "${this.call.title}" was deleted`);
       this.deleteCall(this.call.id);
+    },
+  },
+  computed: {
+    respondingUnitsTitle() {
+      let title;
+      try {
+        title = this.call.respondingUnits.split(",").join(" | ");
+      } catch (err) {
+        title = this.call.respondingUnits.join(" | ");
+      }
+
+      return title;
     },
   },
 };

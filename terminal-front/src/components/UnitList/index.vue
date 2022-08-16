@@ -88,4 +88,7 @@ td {
   justify-content: center;
   text-align: center;
 }
+#unit-display-table {
+  table-layout: fixed;
+}
 </style>

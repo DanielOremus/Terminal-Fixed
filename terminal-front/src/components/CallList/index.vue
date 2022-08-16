@@ -143,7 +143,6 @@ export default {
       newCallStatus: null,
       newCallCode: null,
       newCallNotes: null,
-      newCall: {},
       id: null,
       callPriorities: ["1", "2", "3"],
       callStatuses: ["Active", "Pending"],
@@ -189,19 +188,35 @@ export default {
     },
   },
   methods: {
-    ...mapActions("call", ["setCall"]),
+    ...mapActions("call", ["updateCall", "loadCalls", "addCall"]),
     onSet() {
-      this.newCall = {
-        id: this?.id,
-        title: this.newCallTitle,
-        priority: this.newCallPriority,
-        status: this.newCallStatus,
-        location: this.newCallLocation,
-        respondingUnits: this.newCallRespondingUnits,
-        details: this.newCallDetails,
-        code: this.newCallCode,
-        notes: this.newCallNotes,
-      };
+      if (!this.id) {
+        let call = {
+          title: this.newCallTitle,
+          priority: this.newCallPriority,
+          status: this.newCallStatus,
+          location: this.newCallLocation,
+          respondingUnits: this.newCallRespondingUnits,
+          details: this.newCallDetails,
+          code: this.newCallCode,
+          notes: this.newCallNotes,
+        };
+        console.log(this.newCallRespondingUnits);
+        this.addCall(call);
+      } else {
+        let call = {
+          id: this.id,
+          title: this.newCallTitle,
+          priority: this.newCallPriority,
+          status: this.newCallStatus,
+          location: this.newCallLocation,
+          respondingUnits: this.newCallRespondingUnits,
+          details: this.newCallDetails,
+          code: this.newCallCode,
+          notes: this.newCallNotes,
+        };
+        this.updateCall(call);
+      }
       this.newCallTitle = null;
       this.newCallLocation = null;
       this.newCallRespondingUnits = null;
@@ -211,7 +226,6 @@ export default {
       this.newCallCode = null;
       this.newCallNotes = null;
       this.id = null;
-      this.setCall(this.newCall);
     },
 
     setId(id) {
@@ -226,10 +240,13 @@ export default {
       this.newCallPriority = call.priority;
       this.newCallStatus = call.status;
       this.newCallCode = call.code;
-      this.newCallRespondingUnits = call.respondingUnits;
+      this.newCallRespondingUnits = call.respondingUnits.split(",");
       this.newCallDetails = call.details;
       this.newCallNotes = call.notes;
     },
+  },
+  mounted() {
+    this.loadCalls();
   },
 };
 </script>

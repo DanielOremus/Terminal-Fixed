@@ -38,9 +38,22 @@
                     v-model="newUnitRank"
                   ></v-text-field>
                 </v-col>
-
+                <v-col cols="12" sm="12" md="12" id="status-selector">
+                  <v-select
+                    v-model="newUnitStatus"
+                    :items="this.statuses"
+                    label="STATUS"
+                  >
+                  </v-select>
+                </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-btn block color="green-darken-1" text @click="onSet">
+                  <v-btn
+                    block
+                    color="green-darken-1"
+                    text
+                    :disabled="isAddButtonDisabled"
+                    @click="onSet"
+                  >
                     {{ btnSaveTitle }}
                   </v-btn>
                 </v-col>
@@ -65,8 +78,10 @@ export default {
   name: "AddUnitDialogCard",
   data() {
     return {
+      statuses: ["BUSY", "UNAVAILABLE", "AVAILABLE", "EN ROUTE", "ON SCENE"],
       dialog: false,
       id: null,
+      newUnitStatus: null,
       newUnitNumber: null,
       newUnitName: null,
       newUnitRank: null,
@@ -91,7 +106,13 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("unit", ["isBtnClicked"]),
+    ...mapGetters("unit", ["isBtnClicked", "getUnitById"]),
+
+    cardTitle() {
+      if (this.id) {
+        return `EDIT UNIT: ${this.getUnitById(this.id).number}`;
+      } else return "ADD UNIT";
+    },
 
     isAddClicked() {
       if (this.isBtnClicked()) {
@@ -101,38 +122,25 @@ export default {
     btnSaveTitle() {
       return this.id ? "SAVE" : "ADD";
     },
-    // isAddButtonDisabled() {
-    //   let unit = [
-    //     this.newUnitNumber,
-    //     this.newUnitDepartment,
-    //     this.newUnitName,
-    //     this.newUnitRank,
-    //   ];
-    //   console.log(unit);
-    //   let isUndef = unit.filter(
-    //     (item) => item === null || item === "" || item.length === 0
-    //   );
-    //   if (isUndef.length) {
-    //     isUndef = true;
-    //   } else isUndef = false;
-    //   return isUndef;
+    isAddButtonDisabled() {
+      let unit = [
+        this.newUnitStatus,
+        this.newUnitNumber,
+        this.newUnitDepartment,
+        this.newUnitName,
+        this.newUnitRank,
+      ];
+      let isUndef = unit.filter(
+        (item) => item === null || item === "" || item.length === 0
+      );
+      if (isUndef.length) {
+        isUndef = true;
+      } else isUndef = false;
+      return isUndef;
+    },
   },
   methods: {
-    ...mapActions("unit", [
-      "addUnit",
-      "setBtnClicked",
-      "getUnitById",
-      "updateUnit",
-    ]),
-
-    cardTitle() {
-      if (this.id) {
-        console.log(this.getUnitById(this.id).then((res) => res.number));
-        return `EDIT UNIT: ${this.getUnitById(this.id).then(
-          (res) => res.number
-        )}`;
-      } else return "ADD UNIT";
-    },
+    ...mapActions("unit", ["addUnit", "setBtnClicked", "updateUnit"]),
 
     onSet() {
       if (!this.id) {
@@ -141,7 +149,7 @@ export default {
           rank: this.newUnitRank,
           department: this.newUnitDepartment,
           name: this.newUnitName,
-          status: "Busy",
+          status: this.newUnitStatus,
         };
         this.addUnit(unit);
       } else {
@@ -151,6 +159,7 @@ export default {
           rank: this.newUnitRank,
           department: this.newUnitDepartment,
           name: this.newUnitName,
+          status: this.newUnitStatus,
         };
         this.updateUnit(unit);
       }
@@ -165,6 +174,7 @@ export default {
         (this.newUnitName = unit.name),
         (this.newUnitRank = unit.rank),
         (this.newUnitDepartment = unit.department);
+      this.newUnitStatus = unit.status;
     },
     dialogAfterLeave() {
       this.setBtnClicked(false);
@@ -174,6 +184,7 @@ export default {
       this.newUnitDepartment = null;
       this.newUnitName = null;
       this.newUnitRank = null;
+      this.newUnitStatus = null;
     },
   },
 };
@@ -184,7 +195,7 @@ export default {
   text-align: center;
 }
 #status-selector {
-  width: 100px;
+  width: 300px;
 }
 #container {
   margin-top: 2.5%;

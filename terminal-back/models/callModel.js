@@ -1,7 +1,7 @@
 const db = require("../config/database.js");
 
-module.exports.getUnits = (result) => {
-  db.query("SELECT * FROM unit", (err, results) => {
+module.exports.getCalls = (result) => {
+  db.query("SELECT * FROM calls", (err, results) => {
     if (err) {
       console.log(err);
       result(err, null);
@@ -11,8 +11,8 @@ module.exports.getUnits = (result) => {
   });
 };
 
-module.exports.getUnitById = (id, result) => {
-  db.query("SELECT * FROM unit WHERE id = ?", [id], (err, results) => {
+module.exports.getCallById = (id, result) => {
+  db.query("SELECT * FROM calls WHERE id = ?", [id], (err, results) => {
     if (err) {
       console.log(err);
       result(err, null);
@@ -22,8 +22,8 @@ module.exports.getUnitById = (id, result) => {
   });
 };
 
-module.exports.addUnit = (data, result) => {
-  db.query("INSERT INTO unit SET?", [data], (err, results) => {
+module.exports.addCall = (data, result) => {
+  db.query("INSERT INTO calls SET?", [data], (err, results) => {
     if (err) {
       console.log(err);
       result(err, null);
@@ -33,10 +33,20 @@ module.exports.addUnit = (data, result) => {
   });
 };
 
-module.exports.updateUnit = (data, id, result) => {
+module.exports.updateCall = (data, id, result) => {
   db.query(
-    "UPDATE unit SET number = ?, status = ?, name = ?, rank = ?, department = ? WHERE id = ?",
-    [data.number, data.status, data.name, data.rank, data.department, id],
+    "UPDATE calls SET title = ?, status = ?, location = ?, respondingUnits = ?, priority = ?, details = ?, code = ?, notes = ? WHERE id = ?",
+    [
+      data.title,
+      data.status,
+      data.location,
+      data.respondingUnits.toString(),
+      data.priority,
+      data.details,
+      data.code,
+      data.notes,
+      id,
+    ],
     (err, results) => {
       if (err) {
         console.log(err);
@@ -48,7 +58,7 @@ module.exports.updateUnit = (data, id, result) => {
   );
 };
 
-module.exports.deleteUnit = (id, result) => {
+module.exports.deleteCall = (id, result) => {
   db.query("DELETE FROM unit WHERE id = ?", [id], (err, results) => {
     if (err) {
       console.log(err);

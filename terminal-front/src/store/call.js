@@ -1,21 +1,11 @@
-import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import apiEndpoints from "../constants/apiEndpoints";
+/* eslint-disable */
 export default {
   namespaced: true,
   state() {
     return {
-      callList: [
-        {
-          id: uuidv4(),
-          title: "Robbery",
-          location: "Idlewood, Panoptican Ave.",
-          respondingUnits: ["L-41", "L-25", "D-100"],
-          status: "Active",
-          priority: "3",
-          details: "Dabee dabee dabee",
-          code: "Code 2",
-          notes: "N/A",
-        },
-      ],
+      callList: [],
     };
   },
   getters: {
@@ -24,28 +14,69 @@ export default {
       state.callList.find((item) => item.id === id),
   },
   mutations: {
-    setCall: (state, data) => {
-      if (state.callList.find((item) => item.id === data.id)) {
-        const index = state.callList.map((item) => item.id).indexOf(data.id);
-        state.callList.splice(index, 1, data);
-      } else {
-        let call = {
-          ...data,
-          id: uuidv4(),
-        };
-        state.callList.push(call);
-      }
+    setCalls(state, calls) {
+      state.callList = calls;
+    },
+    addCallToList(state, call) {
+      state.callList.push(call);
+    },
+    updateCall(state, data) {
+      state.callList.find((item) => item.id === data.id);
+      const index = state.callList.map((item) => item.id).indexOf(data.id);
+      state.callList.splice(index, 1, data);
     },
     deleteCall: (state, id) => {
       state.callList = state.callList.filter((item) => item.id !== id);
     },
   },
   actions: {
-    setCall({ commit }, data) {
-      commit("setCall", data);
+    async loadCalls({ commit }) {
+      try {
+        const response = await axios.get(apiEndpoints.calls.getCalls);
+        commit("setCalls", response.data);
+      } catch (err) {
+        console.log(err);
+      }
     },
-    deleteCall({ commit }, id) {
-      commit("deleteCall", id);
+    async addCall({ commit, dispatch }, data) {
+      try {
+        await axios.post(apiEndpoints.calls.addCall, data);
+        commit("addCallToList", data);
+        dispatch("loadCalls");
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async updateCall({ commit, dispatch }, data) {
+      try {
+        console.log(data);
+        await axios.put(apiEndpoints.calls.updateCall(data.id), data);
+        commit("updateCall", data);
+        dispatch("loadCalls");
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async deleteCall({ commit, dispatch }, id) {
+      new Promise((resolve, reject) => {
+        axios
+          .delete(apiEndpoints.calls.deleteCall(id))
+          .then(
+            //Якщо добре
+            (res) => res.data
+          )
+          .then((resData) => {
+            commit("deleteCall", id);
+            dispatch("loadUnits");
+            resolve(true);
+          })
+          .catch((err) => {
+            //Якщо погано
+            reject(err);
+          });
+      });
     },
   },
 };
