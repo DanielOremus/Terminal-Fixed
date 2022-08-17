@@ -59,7 +59,7 @@ module.exports.updateCall = (data, id, result) => {
 };
 
 module.exports.deleteCall = (id, result) => {
-  db.query("DELETE FROM unit WHERE id = ?", [id], (err, results) => {
+  db.query("DELETE FROM calls WHERE id = ?", [id], (err, results) => {
     if (err) {
       console.log(err);
       result(err, null);

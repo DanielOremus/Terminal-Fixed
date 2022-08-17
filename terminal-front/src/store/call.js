@@ -68,7 +68,7 @@ export default {
           )
           .then((resData) => {
             commit("deleteCall", id);
-            dispatch("loadUnits");
+            dispatch("loadCalls");
             resolve(true);
           })
           .catch((err) => {

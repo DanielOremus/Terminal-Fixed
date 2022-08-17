@@ -1,16 +1,16 @@
 export default {
   units: {
-    getUnits: "http://localhost:3000/units",
-    addUnit: "http://localhost:3000/units",
-    updateUnit: (id) => `http://localhost:3000/units/${id}`,
-    getUnitById: (id) => `http://localhost:3000/units/${id}`,
-    deleteUnit: (id) => `http://localhost:3000/units/${id}`,
+    getUnits: `${process.env.VUE_APP_API_URL}/units`,
+    addUnit: `${process.env.VUE_APP_API_URL}/units`,
+    updateUnit: (id) => `${process.env.VUE_APP_API_URL}/units/${id}`,
+    getUnitById: (id) => `${process.env.VUE_APP_API_URL}/units/${id}`,
+    deleteUnit: (id) => `${process.env.VUE_APP_API_URL}/units/${id}`,
   },
   calls: {
-    getCalls: "http://localhost:3000/calls",
-    addCall: "http://localhost:3000/calls",
-    updateCall: (id) => `http://localhost:3000/calls/${id}`,
-    getCallById: (id) => `http://localhost:3000/calls/${id}`,
-    deleteCall: (id) => `http://localhost:3000/calls/${id}`,
+    getCalls: `${process.env.VUE_APP_API_URL}/calls`,
+    addCall: `${process.env.VUE_APP_API_URL}/calls`,
+    updateCall: (id) => `${process.env.VUE_APP_API_URL}/calls/${id}`,
+    getCallById: (id) => `${process.env.VUE_APP_API_URL}/calls/${id}`,
+    deleteCall: (id) => `${process.env.VUE_APP_API_URL}/calls/${id}`,
   },
 };
